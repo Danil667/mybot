@@ -51,14 +51,17 @@ def action_cancel(message: types.Message):
 
 def choose_country(message):
     country = message.text
-    r = requests.get('https://sinoptik.ua/погода-' + country)
-    html = BS(r.content, 'html.parser')
-    for el in html.select('#content'):
-        temp_now = el.select('.temperature .cur')[0].text
-        temp_max = el.select('.temperature .max')[0].text
-        text = el.select('.wDescription .description')[0].text
-    bot.send_message(message.chat.id,
+    try:
+        r = requests.get('https://sinoptik.ua/погода-' + country)
+        html = BS(r.content, 'html.parser')
+        for el in html.select('#content'):
+            temp_now = el.select('.temperature .cur')[0].text
+            temp_max = el.select('.temperature .max')[0].text
+            text = el.select('.wDescription .description')[0].text
+            bot.send_message(message.chat.id,
                                "Прогноз погоды в городе " + country + " на данный момент и максимальная:\n" + 'Сейчас ' + temp_now + ', ' + temp_max + '\n' + text)
+    except:
+        bot.send_message(message.chat.id, "Нету такого города")
 
 def text_translate(message):
     bot.send_message(message.chat.id, message.text.translate(layout))
